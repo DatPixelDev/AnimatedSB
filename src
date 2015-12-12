@@ -25,6 +25,7 @@ public class Main extends JavaPlugin implements Listener{
 	static ArrayList<String> a = new ArrayList<String>();
 	
 	public void add(final Player p){
+	//Variables
 		final int o = Bukkit.getServer().getOnlinePlayers().size();
 		
 		final ScoreboardManager manager = Bukkit.getScoreboardManager();
@@ -32,7 +33,7 @@ public class Main extends JavaPlugin implements Listener{
 		
 		Objective objective = board.registerNewObjective("test", "dummy");
 		objective.setDisplaySlot(DisplaySlot.SIDEBAR);
-		
+	//What shows on Board
 		Score score1 = objective.getScore("§6§lYou:");
 		score1.setScore(13);
 
@@ -78,6 +79,7 @@ public class Main extends JavaPlugin implements Listener{
 			@Override
 			public void run() {
 				
+				// Animation
 				int i = a.size();
 				
 				if(i == 1){
