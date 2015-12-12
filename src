@@ -1,0 +1,153 @@
+package me.pixel.animatedsb;
+
+import java.util.ArrayList;
+
+import org.bukkit.Bukkit;
+import org.bukkit.entity.Player;
+import org.bukkit.event.EventHandler;
+import org.bukkit.event.Listener;
+import org.bukkit.event.player.PlayerJoinEvent;
+import org.bukkit.plugin.RegisteredServiceProvider;
+import org.bukkit.plugin.java.JavaPlugin;
+import org.bukkit.scheduler.BukkitScheduler;
+import org.bukkit.scoreboard.DisplaySlot;
+import org.bukkit.scoreboard.Objective;
+import org.bukkit.scoreboard.Score;
+import org.bukkit.scoreboard.Scoreboard;
+import org.bukkit.scoreboard.ScoreboardManager;
+
+import net.milkbowl.vault.economy.Economy;
+import net.milkbowl.vault.permission.Permission;
+
+public class Main extends JavaPlugin implements Listener{
+	
+	
+	static ArrayList<String> a = new ArrayList<String>();
+	
+	public void add(final Player p){
+		final int o = Bukkit.getServer().getOnlinePlayers().size();
+		
+		final ScoreboardManager manager = Bukkit.getScoreboardManager();
+		final Scoreboard board = manager.getNewScoreboard();
+		
+		Objective objective = board.registerNewObjective("test", "dummy");
+		objective.setDisplaySlot(DisplaySlot.SIDEBAR);
+		
+		Score score1 = objective.getScore("§6§lYou:");
+		score1.setScore(13);
+
+		Score score2 = objective.getScore(p.getDisplayName());
+		score2.setScore(12);
+
+		Score space1 = objective.getScore("§d ");
+		space1.setScore(11);
+
+		Score score3 = objective.getScore("§b§lOnline:");
+		score3.setScore(10);
+
+		Score score4 = objective.getScore("§f" + o);
+		score4.setScore(9);
+
+		Score space2 = objective.getScore("§f ");
+		space2.setScore(8);
+
+		Score score5 = objective.getScore("§e§lRank:");
+		score5.setScore(7);
+
+		Score score6 = objective.getScore(permission.getPrimaryGroup(p.getPlayer()));
+		score6.setScore(6);
+
+		Score space3 = objective.getScore("§6 ");
+		space3.setScore(5);
+
+		long bal = Math.round(economy.getBalance(p));
+
+		Score score7 = objective.getScore("§a§lBalance:");
+		score7.setScore(4);
+
+		Score score8 = objective.getScore("$" + bal);
+		score8.setScore(3);
+
+		a.clear();
+		a.add("1");
+		
+		
+		BukkitScheduler scheduler = Bukkit.getServer().getScheduler();
+		scheduler.scheduleSyncRepeatingTask(this, new Runnable(){
+
+			@Override
+			public void run() {
+				
+				int i = a.size();
+				
+				if(i == 1){
+					objective.setDisplayName(Format("&6IONMC"));
+					a.add("A");
+				}
+				if(i == 2) {
+					objective.setDisplayName(Format("&eIONMC"));
+					a.add("B");
+				}
+				if(i == 3){
+					objective.setDisplayName(Format("&fIONMC"));
+					a.add("C");
+				}
+				if (i == 3){
+					a.clear();
+					a.add("1");
+				}
+			}
+			
+		}, 0, 4);
+		
+		p.setScoreboard(board);
+	}
+	
+	public static Permission permission = null;
+
+	private boolean setupPermissions() {
+		RegisteredServiceProvider<Permission> permissionProvider = getServer().getServicesManager()
+				.getRegistration(net.milkbowl.vault.permission.Permission.class);
+		if (permissionProvider != null) {
+			permission = permissionProvider.getProvider();
+		}
+		return (permission != null);
+	}
+
+	public static Economy economy = null;
+
+	private boolean setupEconomy() {
+		RegisteredServiceProvider<Economy> economyProvider = getServer().getServicesManager()
+				.getRegistration(net.milkbowl.vault.economy.Economy.class);
+		if (economyProvider != null) {
+			economy = economyProvider.getProvider();
+		}
+		return (economy != null);
+	}
+	
+	public String Format(String text){
+		return text.replaceAll("&", "§");
+	}
+	
+	@EventHandler
+	public void onJoin(PlayerJoinEvent e){
+		Player p = e.getPlayer();
+		this.add(p);
+	}
+	
+	public void onEnable(){
+		if (!setupPermissions()) {
+			getLogger().severe(" Plugin requires VAULT to be enabled.");
+			Bukkit.getPluginManager().disablePlugin(this);
+		}
+		if (!setupEconomy()) {
+			Bukkit.getPluginManager().disablePlugin(this);
+		}
+		Bukkit.getServer().getPluginManager().registerEvents(this, this);
+	}
+	
+	public void onDisable(){
+		
+	}
+
+}
